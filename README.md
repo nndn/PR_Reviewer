@@ -1,6 +1,13 @@
 # PR Reviewer Agent: Automatic reviews for PRs by AI
 
+UNDER DEVELOPMENT
+
 Try it out:
+
+- pip install -r requirements.txt
+- docker-compose up
+- alembic upgrade head
+- python pr_reviewer/server.py
 
 - once server is up, you can use /docs to get oapi ui, use it to playaround
 - ex: http://127.0.0.1:8080/docs -> local default development
@@ -11,9 +18,15 @@ Dependencies:
 
 - postgres (docker-compose) -> alembic migrations
 - redis (docker-compose)
-- openai / openrouter api key
+- openrouter api key (can add openai key, need to update the adapter in server.py)
 - github access key
 - pip install requirements.txt
+
+UNDER DEVELOPMENT
+
+Things that will break (currently fixing):
+
+- error handling: returning 500 for 400 related errors aswell
 
 # development
 
@@ -51,6 +64,7 @@ TODO: current:
 - implement exhaustive error handling. Especially for external rate-limits etc
 - use structured logger that is defined, figure out what to do with celery, fastapi logs
 - fine tune and improve prompts in reviewer application, start batching inference
+- startup script, fix docker issue (celery not connecting to redis)
 
 TODO: new features:
 

@@ -2,11 +2,11 @@ from logging import Logger
 from src.domain.task import ReviewTask, TaskStatus
 from src.ports.pull_request_repo import IPullRequestRepo
 from src.ports.task_repo import ITaskRepo
-from src.domain.review import Review, ReviewSummary
 from src.ports.reviewer import IPullRequestReviewer
+from src.ports.task_execution import ITaskConsumer
 
 
-class WorkerApplication(): 
+class WorkerApplication(ITaskConsumer): 
     
     def __init__(self, logger:Logger, pr_repo:IPullRequestRepo, task_repo: ITaskRepo, reviewer: IPullRequestReviewer):
         self.logger = logger
