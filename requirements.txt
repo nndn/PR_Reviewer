@@ -1,0 +1,14 @@
+alembic==1.14.1
+anthropic==0.43.1
+celery==5.4.0
+fastapi==0.115.6
+huggingface_hub==0.27.1
+instructor==1.7.2
+openai==1.59.9
+pydantic==2.10.5
+PyGithub==2.5.0
+Pygments==2.19.1
+python-dotenv==1.0.1
+python_json_logger==3.2.1
+SQLAlchemy==2.0.37
+uvicorn==0.34.0
