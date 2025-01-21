@@ -12,3 +12,5 @@ python-dotenv==1.0.1
 python_json_logger==3.2.1
 SQLAlchemy==2.0.37
 uvicorn==0.34.0
+psycopg2-binary==2.9.10
+redis==5.2.1

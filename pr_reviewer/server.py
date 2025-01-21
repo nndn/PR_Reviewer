@@ -40,7 +40,7 @@ def main():
     worker_app = WorkerApplication(logger=logger, pr_repo=pr_repo, task_repo=task_repo, reviewer=reviewer)
     
     redis_conn_string = os.getenv("REDIS_CONN_STRING") or "redis://localhost:6379"
-    celery_app = Celery('tasks', broker=redis_conn_string , backend=redis_conn_string)
+    celery_app = Celery('tasks', broker=redis_conn_string + "/0" , backend=redis_conn_string + "/1")
     run_task = create_task(celery_app, worker_app)
     celery_app.register_task(run_task)
     
