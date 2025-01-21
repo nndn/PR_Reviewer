@@ -1,7 +1,9 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
+from sqlalchemy import engine_from_config, create_engine
 from sqlalchemy import pool
+from dotenv import load_dotenv
+import os
 
 from alembic import context
 from pygments.lexers import sql
@@ -58,11 +60,9 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    load_dotenv()
+    url = os.getenv("POSTGRES_DSN") or ""
+    connectable = create_engine(url=url)
 
     with connectable.connect() as connection:
         context.configure(
