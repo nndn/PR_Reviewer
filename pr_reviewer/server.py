@@ -46,7 +46,7 @@ def main():
     
     worker_thread = threading.Thread(
         target=celery_app.worker_main,
-        args=(['worker', '-l', 'info'],)
+        args=(['worker', '-l', 'info', '--max-memory-per-child', '100'],)
     )
     worker_thread.daemon = True
     worker_thread.start()
