@@ -6,6 +6,7 @@ from sqlalchemy.sql import func
 from src.domain.task import  TaskStatus, Review, ReviewTask
 from src.domain.review import ReviewSummary
 from src.ports.task_repo import ITaskRepo
+from src.domain.exceptions import ResourceNotFound
 from dataclasses import asdict
 
 
@@ -54,7 +55,7 @@ class PostgresTaskRepo(ITaskRepo):
             stmt = select(Task).where(Task.id == task_id)
             res = session.scalar(stmt)
             if res == None:
-                raise Exception("Not found")
+                raise ResourceNotFound("task not found")
             
             return ReviewTask(id=res.id, repo_url=res.repo_url, pr_number=res.pr_number, auth_token=res.auth_token, status=res.status, created_at=res.created_at, results=res.get_results())
   
@@ -63,7 +64,7 @@ class PostgresTaskRepo(ITaskRepo):
             stmt = select(Task).where(Task.id == task_id)
             task = session.scalar(stmt)
             if task is None:
-                raise Exception("Not found")
+                raise ResourceNotFound("task not found")
             
             task.status = status
             if result is not None:

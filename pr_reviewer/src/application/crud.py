@@ -14,7 +14,7 @@ class CrudApplication(ICrudApplication):
         self.task_publisher = task_publisher
 
     def add_review_task(self, repo_url: str, pr_number: int, auth_token: str | None=None) -> int:
-        
+        """ ideally should validate the repo details and raise exception """
         task_id = self.task_repo.add(repo_url, pr_number, auth_token)
         self.task_publisher.add_review_task(task_id=task_id)
         

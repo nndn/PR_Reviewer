@@ -1,7 +1,8 @@
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.openapi.docs import get_swagger_ui_html
 from src.ports.crud_application import ICrudApplication
+from src.domain.exceptions import ResourceNotFound
 from dataclasses import asdict
 from src.adapters.inbound.http_api_schemas import \
 HealthCheck, AnalyzePrRequest, AnalyzePrResponse, TaskResultResponse, TaskStatusResponse
@@ -34,12 +35,18 @@ def get_router(application:ICrudApplication) -> FastAPI:
     
     @app.get("/status/{task_id}")
     async def get_task_status(task_id:int) -> TaskStatusResponse:
-        status = application.get_review_status(task_id)
+        try:
+            status = application.get_review_status(task_id)
+        except (ResourceNotFound):
+            raise HTTPException(status_code=404, detail="task not found")
         return TaskStatusResponse(task_id=task_id, status=status)
     
     @app.get("/results/{task_id}")
     async def get_task_result(task_id:int) -> TaskResultResponse:
-        status, review = application.get_review_result(task_id)
+        try:
+            status, review = application.get_review_result(task_id)
+        except (ResourceNotFound):
+            raise HTTPException(status_code=404, detail="task not found")
         response = TaskResultResponse(task_id=task_id, status=status)
         if review is not None:
             response.results = asdict(review)
