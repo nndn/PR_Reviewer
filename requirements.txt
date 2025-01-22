@@ -1,5 +1,5 @@
 alembic==1.14.1
-anthropic==0.43.1
+anthropic==0.44.0
 celery==5.4.0
 fastapi==0.115.6
 huggingface_hub==0.27.1
@@ -12,5 +12,6 @@ python-dotenv==1.0.1
 python_json_logger==3.2.1
 SQLAlchemy==2.0.37
 uvicorn==0.34.0
+retry==0.9.2
 psycopg2-binary==2.9.10
 redis==5.2.1
