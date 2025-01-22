@@ -1,6 +1,5 @@
 from typing import Optional, Dict, Any
-from pydantic import BaseModel
-from src.domain.review import Review
+from pydantic import BaseModel, Field
 from src.domain.task import TaskStatus
 
 
@@ -9,7 +8,7 @@ class HealthCheck(BaseModel):
 
     
 class AnalyzePrRequest(BaseModel):
-    repo_url: str 
+    repo_url: str = Field(pattern=r'^*github.com/*/*/*')
     pr_number: int
     github_token: Optional[str] = None
     
