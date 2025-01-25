@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import  List
+from typing import List
 
 
 class IssueType(str, Enum):
@@ -33,7 +33,7 @@ class ReviewSummary:
     critical_issues: int
 
 
-@dataclass    
-class Review: 
+@dataclass
+class Review:
     files: List[FileReview]
     summary: ReviewSummary

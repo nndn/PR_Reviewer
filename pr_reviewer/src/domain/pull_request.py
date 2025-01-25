@@ -21,4 +21,3 @@ class PullRequest:
     title: str
     description: str
     file_changes: List[FileChanges]
-    

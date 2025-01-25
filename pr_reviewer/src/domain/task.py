@@ -21,4 +21,3 @@ class ReviewTask:
     status: TaskStatus
     created_at: datetime
     results: Optional[Review] = None
-    

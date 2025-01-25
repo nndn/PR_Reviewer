@@ -2,9 +2,9 @@ from celery import Celery
 from src.ports.task_execution import ITaskConsumer
 
 
-def create_task(app:Celery, consumer: ITaskConsumer): 
-    """ This is closure that helps dependency inversion of worker application 
-        while being able to register the task function to celery """
+def create_task(app: Celery, consumer: ITaskConsumer):
+    """This is closure that helps dependency inversion of worker application
+    while being able to register the task function to celery"""
 
     @app.task
     def task_function(task_id: int):
