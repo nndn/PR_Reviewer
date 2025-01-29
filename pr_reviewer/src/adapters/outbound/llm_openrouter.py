@@ -23,13 +23,3 @@ class OpenRouterInstructorAIModel(ILanguageModel, Generic[PydanticModel]):
             ],
         )
         return response
-
-    def sync_prompt2(self, system_prompt: str, user_prompt: str) -> str:
-        response = self.openai.chat.completions.create(
-            model="qwen/qwen-2-vl-7b-instruct",
-            messages=[
-                {"role": "developer", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-        )
-        return response.choices[0].message.content or ""

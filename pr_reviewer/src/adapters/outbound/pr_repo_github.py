@@ -1,9 +1,11 @@
 from typing import Optional, List
-from github import Github
-from github import Auth
+from github import Github, Auth
+from github.Repository import Repository
+from github.ContentFile import ContentFile
 from src.ports.pull_request_repo import IPullRequestRepo
 from src.domain.pull_request import PullRequest, Assignee, FileChanges
 import re
+from retry import retry
 
 MAX_FILE_CHANGES_CHAR_SIZE = 10000
 
@@ -30,10 +32,8 @@ class GithubPrRepo(IPullRequestRepo):
         auth = Auth.Token(auth_token)
         self.github = Github(auth=auth)
 
-    def get(
-        self, repo_url: str, pr_number: int, auth_token: Optional[str] = None
-    ) -> PullRequest:
-
+    @retry(tries=3)
+    def get_repo(self, repo_url: str, auth_token: Optional[str]) -> Repository:
         # use the use auth token if passed, otherwise default to one that has public access
         github = self.github
         if auth_token is not None and auth_token != "":
@@ -46,7 +46,13 @@ class GithubPrRepo(IPullRequestRepo):
         owner = splits[0]
         repo_name = splits[1]
 
-        repo = github.get_repo(f"{owner}/{repo_name}")
+        return github.get_repo(f"{owner}/{repo_name}")
+
+    def get(
+        self, repo_url: str, pr_number: int, auth_token: Optional[str] = None
+    ) -> PullRequest:
+
+        repo = self.get_repo(repo_url, auth_token)
         pr = repo.get_pull(pr_number)
 
         assignees: List[Assignee] = []
@@ -79,4 +85,24 @@ class GithubPrRepo(IPullRequestRepo):
             title=pr.title,
             description=pr.body,
             file_changes=file_changes,
+            head_repo=pr.head.repo.full_name,
+            base_repo=pr.base.repo.full_name,
+            head_ref=pr.head.ref,
+            base_ref=pr.head.ref,
         )
+
+    def get_file(
+        self, repo_str: str, branch: str, path: str, auth_token: Optional[str] = None
+    ) -> str:
+        repo = self.get_repo(repo_str, auth_token)
+
+        repo.get_branch(branch)
+        content = repo.get_contents(path=path)
+        decoded_content = ""
+        if type(content) is list[ContentFile]:
+            for c in content:
+                decoded_content = decoded_content + str(c.decoded_content)
+        elif type(content) is ContentFile:
+            decoded_content = str(content.decoded_content)
+
+        return decoded_content

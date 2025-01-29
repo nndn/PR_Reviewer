@@ -1,21 +1,21 @@
 from src.adapters.outbound.llm_openrouter import OpenRouterInstructorAIModel
 from src.application.reviewer import FileReviewResponse
 from src.adapters.outbound.pr_repo_github import GithubPrRepo
+from src.application.reviewer_agentic import AgenticReviewer
 from dotenv import load_dotenv
 import os
+from langchain_openai import ChatOpenAI
+from pydantic import SecretStr
 
 
 def github_pr_repo():
     key = os.getenv("GITHUB_ACCESS_TOKEN") or ""
+    url = "https://github.com/openai/openai-python/pull/2032"
+    pr_no = 2032
     g = GithubPrRepo(key)
-    pr = g.get(
-        "https://github.com/Dokploy/dokploy/pull/1158/files#diff-3a07c3a049898c3c20d8f5a2a2eca7be87cdbb9272a50377f4d6461ec29b35e1",
-        1158,
-    )
-    for change in pr.file_changes:
-        print("\n======================================================\n")
-        print(change.file_name)
-        print(change.patch)
+    pr = g.get(url, pr_no)
+    print("pr: ", pr.base_ref, pr.head_ref)
+    # res = g.get_file(url)
 
 
 def open_router_model():
@@ -29,6 +29,21 @@ def open_router_model():
     print(res)
 
 
+def pr_agent():
+    key = os.getenv("OPEN_ROUTER_API_KEY") or ""
+    githubkey = os.getenv("GITHUB_ACCESS_TOKEN") or ""
+    g = GithubPrRepo(githubkey)
+
+    openai = ChatOpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=SecretStr(key),
+        model="gpt-3.5-turbo",
+    )
+    reviewer = AgenticReviewer(openai, g)
+    pr = g.get("https://github.com/openai/openai-python/pull/2032", 2032)
+    reviewer.review_pr(pr)
+
+
 def main():
     load_dotenv()
 
@@ -36,6 +51,7 @@ def main():
 
     # open_router_model()
     # github_pr_repo()
+    pr_agent()
 
 
 if __name__ == "__main__":
