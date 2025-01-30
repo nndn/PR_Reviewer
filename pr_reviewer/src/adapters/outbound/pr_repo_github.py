@@ -106,3 +106,25 @@ class GithubPrRepo(IPullRequestRepo):
             decoded_content = str(content.decoded_content)
 
         return decoded_content
+
+    def _build_directory_string(self, repo: Repository, path: str, indent: str):
+        contents = repo.get_contents(path)
+        if isinstance(contents, ContentFile):
+            contents = [contents]
+        result = []
+        for item in contents:
+            if item.type == "dir":
+                result.append(f"{indent}{item.name}/")
+                # Recurse into subdirectory with increased indentation
+                sub_result = self._build_directory_string(
+                    repo, item.path, indent + "    "
+                )
+                result.extend(sub_result)
+            else:
+                result.append(f"{indent}{item.name}")
+        return result
+
+    def get_dir_structure(self, repo_str: str, auth_token: Optional[str]) -> str:
+        repo = self.get_repo(repo_str, auth_token)
+        root_contents = self._build_directory_string(repo, "", "    ")
+        return "\n".join(root_contents)

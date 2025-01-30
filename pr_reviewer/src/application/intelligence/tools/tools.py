@@ -16,7 +16,6 @@ def get_fetch_file_tool(repo: IPullRequestRepo):
     @tool
     def fetch_file(ip: FetchFileInput):
         """fetch file for the given path"""
-
         return repo.get_file(ip.repo_name, ip.branch, ip.path, ip.auth_token)
 
     return fetch_file
