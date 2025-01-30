@@ -13,3 +13,22 @@ class IPullRequestRepo(ABC):
     ) -> PullRequest:
         """get accepts repo_url and pr number to query for pr details"""
         pass
+
+    @abstractmethod
+    def get_file(
+        self, repo_str: str, branch: str, path: str, auth_token: Optional[str] = None
+    ) -> str:
+        """get a file in a branch"""
+        pass
+
+    @abstractmethod
+    def get_dir_structure(self, repo_str: str, auth_token: Optional[str]) -> str:
+        """get file structure for given repo in this format:
+
+        dir_name
+            subdir_name
+                ...
+            filename.extension
+
+        """
+        pass
